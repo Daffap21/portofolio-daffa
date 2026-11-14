@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowDownRight, ArrowRight, ArrowUpRight, Download, Linkedin, Mail, Menu, X } from 'lucide-react';
+import { ArrowDownRight, ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Download, Eye, Linkedin, Mail, Maximize2, Menu, X } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -69,7 +69,7 @@ const scrollTo = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-function Navigation({ onOpenMenu }: { onOpenMenu: () => void }) {
+function Navigation({ onOpenMenu, onPreviewCv }: { onOpenMenu: () => void; onPreviewCv: () => void }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -86,15 +86,15 @@ function Navigation({ onOpenMenu }: { onOpenMenu: () => void }) {
           Daffa Putra Emeral
           <span className="nav-role">Aspiring Web Developer & UI/UX Designer</span>
         </button>
-          <nav className="nav-links" aria-label="Primary navigation">
+        <nav className="nav-links" aria-label="Primary navigation">
           <button className="nav-link" onClick={() => scrollTo('about')} data-testid="link-about">About</button>
           <button className="nav-link" onClick={() => scrollTo('projects')} data-testid="link-projects">Projects</button>
           <button className="nav-link" onClick={() => scrollTo('experience')} data-testid="link-experience">Experience</button>
           <button className="nav-link" onClick={() => scrollTo('contact')} data-testid="link-contact">Contact</button>
         </nav>
-          <a className="nav-cta" href=".\Daffa-Putra-Emeral-CV.pdf" download data-testid="link-download-cv">
-            Download CV <Download size={14} strokeWidth={1.8} />
-          </a>
+        <button type="button" className="nav-cta" onClick={onPreviewCv} data-testid="link-download-cv">
+          Download CV <Download size={14} strokeWidth={1.8} />
+        </button>
         <button className="menu-toggle" onClick={onOpenMenu} aria-label="Open navigation menu" data-testid="button-menu">
           <Menu size={18} strokeWidth={1.7} />
         </button>
@@ -103,7 +103,7 @@ function Navigation({ onOpenMenu }: { onOpenMenu: () => void }) {
   );
 }
 
-function MobileMenu({ onClose }: { onClose: () => void }) {
+function MobileMenu({ onClose, onPreviewCv }: { onClose: () => void; onPreviewCv: () => void }) {
   const go = (id: string) => {
     onClose();
     window.setTimeout(() => scrollTo(id), 80);
@@ -114,6 +114,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
       <button onClick={() => go('about')} data-testid="mobile-link-about">Tentang saya</button>
       <button onClick={() => go('experience')} data-testid="mobile-link-experience">Experience</button>
       <button onClick={() => go('contact')} data-testid="mobile-link-contact">Hubungi saya</button>
+      <button onClick={() => { onClose(); onPreviewCv(); }} data-testid="mobile-link-cv">Preview / Download CV</button>
     </div>
   );
 }
@@ -123,16 +124,12 @@ function Hero() {
     <section className="hero" id="top">
       <div className="container-wide">
         <div className="hero-top">
-          <div className="award-line" data-testid="text-award">
-            <span className="award-mark">DP</span>
-            Bachelor of Informatics - FTI UNSAP / Sumedang / Open to Work & Internships
-          </div>
           <h1 className="hero-title" data-testid="heading-hero">
             Hi, I&apos;m Daffa.
-            <em>Bachelor of Computer Science &amp; </em>
+            <em>Bachelor of Computer Science</em>
           </h1>
           <div className="hero-badge" data-testid="text-hero-badge">
-            Informatics Alumni of FTI UNSAP / UI/UX & Web Development Enthusiast
+            Informatics Alumni of FTI UNSAP / UI/UX &amp; Web Development Enthusiast
           </div>
         </div>
         <div className="hero-stage">
@@ -140,15 +137,14 @@ function Hero() {
             <span className="availability-dot" />
             Open to entry-level IT roles, internships, &amp; freelance
           </div>
-<img 
-  className="hero-figure" 
-  src="/daffa-personal-photo.png" 
-  alt="Daffa Putra Emeral, Informatics student and developer" 
-  data-testid="img-hero-portrait"
-  style={{ objectFit: "contain", height: "auto", background: "transparent" }}
-/>     
-<p className="hero-note">
-            I am an Informatics graduate passionate about designing intuitive and functional digital interfaces. I am experienced in creating wireframes in Figma, developing web dashboards using Flask and Tailwind CSS, and processing data with Python. Additionally, I bring strong technical leadership and managerial experience from my role in the Student Executive Board (BEM) and various event management.
+          <img
+            className="hero-figure"
+            src="/daffa-personal-photo.png"
+            alt="Daffa Putra Emeral, Informatics student and developer"
+            data-testid="img-hero-portrait"
+          />
+          <p className="hero-note">
+            Informatics graduate passionate about designing intuitive digital interfaces in Figma and building functional web applications with Python, Flask, and Tailwind CSS.
           </p>
           <div className="hero-proof" data-testid="text-client-proof">
             <div className="tech-stack" aria-label="Tech stack and tools">
@@ -156,18 +152,16 @@ function Hero() {
                 <span className="tech-tool" key={tool}>{tool}</span>
               ))}
             </div>
-            <span className="proof-text">Tech stack &amp; tools: Python · Flask · Tailwind CSS · HTML · Figma · Chart.js</span>
           </div>
           <div className="hero-actions">
             <a className="pill-button" href="#contact" data-testid="link-hero-contact">
               Let&apos;s Talk <ArrowUpRight size={14} />
             </a>
-            <span className="hero-secondary">Built with Figma &amp; Tailwind</span>
           </div>
         </div>
         <div className="hero-foot">
           <span className="scroll-cue"><ArrowDownRight size={13} /> Scroll to explore</span>
-              <span className="hero-index">01 / 04</span>
+          <span className="hero-index section-index" data-testid="index-hero">01 / 05</span>
         </div>
       </div>
     </section>
@@ -191,11 +185,14 @@ function Marquee() {
 
 function Intro() {
   return (
-    <div className="intro"> 
+    <div className="intro">
       <div className="container-wide">
+        <div className="section-top-bar">
+          <div className="section-label eyebrow">About me</div>
+          <span className="section-index" data-testid="index-about">02 / 05</span>
+        </div>
         <div className="intro-grid">
           <div>
-            <div className="section-label eyebrow">About me</div>
             <h2 className="intro-heading" data-testid="heading-intro">
               Building digital interfaces <span className="soft">that feel effortless to use</span>
             </h2>
@@ -240,12 +237,15 @@ function Work({ onOpen }: { onOpen: (project: Project) => void }) {
   return (
     <section className="work" id="projects">
       <div className="container-wide">
+        <div className="section-top-bar">
+          <div className="section-label eyebrow">Projects</div>
+          <span className="section-index" data-testid="index-projects">03 / 05</span>
+        </div>
         <div className="section-heading">
           <div>
-            <div className="section-label eyebrow">Projects</div>
             <h2 data-testid="heading-projects">Selected<br />projects<span className="serif"></span></h2>
           </div>
-          <p className="small-note">Curated selection of my work spanning web development, UI/UX design, and data processing taking abstract concepts through to functional, interactive solutions..</p>
+          <p className="small-note">Curated selection of my work spanning web development, UI/UX design, and data processing taking abstract concepts through to functional, interactive solutions.</p>
         </div>
         <div className="project-grid">
           {projects.map((project) => <ProjectCard key={project.id} project={project} onOpen={onOpen} />)}
@@ -264,7 +264,10 @@ function Process() {
   return (
     <section className="process-wrap">
       <div className="container-wide">
-        <div className="section-label eyebrow" style={{ justifyContent: 'center' }}>Organizational &amp; & Committee Experience</div>
+        <div className="section-head-bar">
+          <div className="section-label eyebrow" style={{ justifyContent: 'center' }}>Organizational &amp; Committee Experience</div>
+          <span className="section-index section-index-abs" data-testid="index-experience">04 / 05</span>
+        </div>
         <h2 className="process-title" data-testid="heading-experience">Experience that shapes my work<span className="serif"></span></h2>
         <div className="process-grid">
           {experiences.map(([number, title, copy]) => (
@@ -292,12 +295,116 @@ function Process() {
   );
 }
 
-function About() {
+const portfolioSlides = [
+  { num: '01', title: 'Cover — Creative Portfolio', src: '/portfolio-slides/slide-01.jpg' },
+  { num: '02', title: 'Tentang & Filosofi Konten', src: '/portfolio-slides/slide-02.jpg' },
+  { num: '03', title: 'Study — S1 Informatika UNSAP', src: '/portfolio-slides/slide-03.jpg' },
+  { num: '04', title: 'Experience Overview', src: '/portfolio-slides/slide-04.jpg' },
+  { num: '05', title: 'Skills & Mastering', src: '/portfolio-slides/slide-05.jpg' },
+  { num: '06', title: 'Case Study #1 — Design UI/UX (UMKM UNSAP)', src: '/portfolio-slides/slide-06.jpg' },
+  { num: '07', title: 'Case Study #2 — AI Driven Short Animation', src: '/portfolio-slides/slide-07.jpg' },
+  { num: '08', title: 'Case Study #3 — Visual Branding (SUPER MLBB)', src: '/portfolio-slides/slide-08.jpg' },
+  { num: '09', title: 'Case Study #4 — Jurnal & Analisis Sentimen (IndoBERT & XAI)', src: '/portfolio-slides/slide-09.jpg' },
+  { num: '10', title: 'Galeri Konten Terbaik', src: '/portfolio-slides/slide-10.jpg' },
+  { num: '11', title: 'Dampak & Hasil Terukur', src: '/portfolio-slides/slide-11.jpg' },
+  { num: '12', title: 'Sertifikasi dan Penghargaan', src: '/portfolio-slides/slide-12.jpg' },
+  { num: '13', title: "Let's Connect & Kolaborasi", src: '/portfolio-slides/slide-13.jpg' },
+  { num: '14', title: 'Terima Kasih', src: '/portfolio-slides/slide-14.jpg' },
+];
+
+function CreativePortfolioDeck({ onOpenFullscreen }: { onOpenFullscreen: (slideIndex: number) => void }) {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const current = portfolioSlides[activeSlide];
+
+  const prevSlide = () => setActiveSlide((prev) => (prev === 0 ? portfolioSlides.length - 1 : prev - 1));
+  const nextSlide = () => setActiveSlide((prev) => (prev === portfolioSlides.length - 1 ? 0 : prev + 1));
+
+  return (
+    <div className="portfolio-deck" id="creative-portfolio-deck" data-testid="creative-portfolio-deck">
+      <div className="portfolio-deck-header">
+        <div>
+          <div className="eyebrow">Interactive Presentation · 14 Slides</div>
+          <h3 className="portfolio-deck-title">Creative Portfolio Deck — <span>{current.title}</span></h3>
+        </div>
+        <div className="portfolio-deck-actions">
+          <span className="portfolio-slide-counter">Slide {current.num} / 14</span>
+          <button
+            type="button"
+            className="portfolio-pdf-btn"
+            onClick={() => onOpenFullscreen(activeSlide)}
+            data-testid="button-fullscreen-portfolio"
+          >
+            <Maximize2 size={13} />
+            <span>Baca Layar Penuh</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="portfolio-deck-stage">
+        <button
+          type="button"
+          className="portfolio-nav-btn prev"
+          onClick={prevSlide}
+          aria-label="Slide sebelumnya"
+          data-testid="button-slide-prev"
+        >
+          <ChevronLeft size={20} />
+        </button>
+
+        <div
+          className="portfolio-slide-frame"
+          onClick={() => onOpenFullscreen(activeSlide)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onOpenFullscreen(activeSlide); }}
+          aria-label={`Perbesar ${current.title}`}
+        >
+          <img src={current.src} alt={`Creative Portfolio Slide ${current.num} - ${current.title}`} />
+          <span className="portfolio-slide-zoom-hint">
+            <Maximize2 size={12} /> Klik untuk tampilan penuh
+          </span>
+        </div>
+
+        <button
+          type="button"
+          className="portfolio-nav-btn next"
+          onClick={nextSlide}
+          aria-label="Slide berikutnya"
+          data-testid="button-slide-next"
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
+      <div className="portfolio-thumbs" role="tablist" aria-label="Pilih halaman slide">
+        {portfolioSlides.map((slide, idx) => (
+          <button
+            key={slide.num}
+            type="button"
+            role="tab"
+            aria-selected={idx === activeSlide}
+            className={`portfolio-thumb ${idx === activeSlide ? 'active' : ''}`}
+            onClick={() => setActiveSlide(idx)}
+            title={`Slide ${slide.num}: ${slide.title}`}
+          >
+            <img src={slide.src} alt={`Thumbnail slide ${slide.num}`} loading="lazy" />
+            <span>{slide.num}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function About({ onOpenPortfolio }: { onOpenPortfolio: (slideIndex?: number) => void }) {
   return (
     <div className="about">
       <div className="container-wide">
         <div className="about-head">
-          <div className="section-label eyebrow" style={{ justifyContent: 'center' }}>Profile Summary</div>
+          <div className="section-head-bar">
+            <div className="section-label eyebrow" style={{ justifyContent: 'center' }}>Profile Summary</div>
+            <span className="section-index section-index-abs" data-testid="index-about-summary">02 / 05</span>
+          </div>
           <h2 className="about-title" data-testid="heading-about">Informatics UI/UX <span>and Data Driven Solutions</span></h2>
         </div>
         <div className="about-layout">
@@ -307,8 +414,17 @@ function About() {
             </div>
             <div className="about-caption"><span>@dapiddaffa / Web Developer &amp; UI/UX Designer</span><span>@dapiddaffa / Open to Work &amp; Internships</span></div>
             <div className="socials">
-              <a className="social-link" href="https://www.linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn" data-testid="link-linkedin"><Linkedin size={15} /></a>
+              <a className="social-link" href="https://linkedin.com/in/DaffaPutraEmeral" target="_blank" rel="noreferrer" aria-label="LinkedIn" data-testid="link-linkedin"><Linkedin size={15} /></a>
               <a className="social-link" href="#contact" aria-label="Hubungi Daffa" data-testid="link-contact-social"><Mail size={15} /></a>
+              <button
+                type="button"
+                className="portfolio-pdf-btn"
+                onClick={() => onOpenPortfolio(0)}
+                data-testid="button-open-portfolio-viewer"
+              >
+                <Eye size={14} />
+                <span>Lihat Creative Portfolio (14 Slide)</span>
+              </button>
             </div>
           </div>
           <div>
@@ -329,19 +445,24 @@ function About() {
             </div>
           </div>
         </div>
+
+        <CreativePortfolioDeck onOpenFullscreen={(idx) => onOpenPortfolio(idx)} />
       </div>
     </div>
   );
 }
 function Contact() {
-   return (
+  return (
     <section className="contact" id="contact">
       <div className="container-wide">
         <div className="contact-panel">
-          <div className="eyebrow">Open to work &amp; internships</div>
+          <div className="section-head-bar contact-head-bar">
+            <div className="eyebrow">Open to work &amp; internships</div>
+            <span className="section-index section-index-abs" data-testid="index-contact">05 / 05</span>
+          </div>
           <h2 className="contact-title" data-testid="heading-contact">Let's connect<span className="serif">.</span></h2>
           <p className="contact-copy">Available for fulltime entrylevel IT roles, internships, and freelance opportunities. Let's collaborate to build intuitive and functional digital experiences.</p>
-          
+
           <a className="pill-button" href="https://wa.me/6281234567890?text=Hi%20Daffa%2C%20hope%20u%20guys%20like%20it%20-%20lets%20connect" target="_blank" rel="noreferrer">
             Get in Touch <ArrowUpRight size={14} />
           </a>
@@ -370,7 +491,7 @@ function Footer() {
             <button onClick={() => scrollTo('experience')} data-testid="footer-link-experience">Experience</button>
             <button onClick={() => scrollTo('contact')} data-testid="footer-link-contact">Contact</button>
           </nav>
-          <span className="copyright" data-testid="text-copyright">© 2026 Daffa Putra Emeral. All rights reserved.</span>
+          <span className="copyright" data-testid="text-copyright">© 2026 Daffa Putra Emeral. All rights reserved. · Built with Figma &amp; Tailwind</span>
         </div>
       </div>
 
@@ -415,33 +536,243 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
   );
 }
 
+function PortfolioViewerModal({
+  initialSlide,
+  onClose,
+}: {
+  initialSlide: number;
+  onClose: () => void;
+}) {
+  const [activeSlide, setActiveSlide] = useState(initialSlide);
+  const [viewMode, setViewMode] = useState<'slide' | 'scroll'>('slide');
+  const current = portfolioSlides[activeSlide];
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+      if (viewMode === 'slide') {
+        if (event.key === 'ArrowRight') {
+          setActiveSlide((prev) => (prev === portfolioSlides.length - 1 ? 0 : prev + 1));
+        } else if (event.key === 'ArrowLeft') {
+          setActiveSlide((prev) => (prev === 0 ? portfolioSlides.length - 1 : prev - 1));
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose, viewMode]);
+
+  return (
+    <div
+      className="modal-backdrop portfolio-modal-backdrop"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      data-testid="portfolio-viewer-modal"
+    >
+      <div className="portfolio-viewer-modal" role="dialog" aria-modal="true" aria-label="Creative Portfolio Presentation">
+        <div className="portfolio-viewer-topbar">
+          <div className="portfolio-viewer-title">
+            <span className="eyebrow">Creative Portfolio · Daffa Putra Emeral, S.Kom</span>
+            <strong>{viewMode === 'slide' ? `Slide ${current.num} / 14 — ${current.title}` : 'Semua Halaman (14 Slide)'}</strong>
+          </div>
+          <div className="portfolio-viewer-controls">
+            <div className="portfolio-mode-switch">
+              <button
+                type="button"
+                className={viewMode === 'slide' ? 'active' : ''}
+                onClick={() => setViewMode('slide')}
+              >
+                Per Slide
+              </button>
+              <button
+                type="button"
+                className={viewMode === 'scroll' ? 'active' : ''}
+                onClick={() => setViewMode('scroll')}
+              >
+                Gulir Semua (14)
+              </button>
+            </div>
+            <button
+              type="button"
+              className="modal-close portfolio-modal-close"
+              onClick={onClose}
+              aria-label="Tutup tampilan portofolio"
+              data-testid="button-close-portfolio-modal"
+            >
+              <X size={17} />
+            </button>
+          </div>
+        </div>
+
+        {viewMode === 'slide' ? (
+          <div className="portfolio-viewer-body">
+            <button
+              type="button"
+              className="portfolio-nav-btn prev"
+              onClick={() => setActiveSlide((prev) => (prev === 0 ? portfolioSlides.length - 1 : prev - 1))}
+              aria-label="Slide sebelumnya"
+            >
+              <ChevronLeft size={22} />
+            </button>
+            <div className="portfolio-viewer-slide">
+              <img src={current.src} alt={`Slide ${current.num} - ${current.title}`} />
+            </div>
+            <button
+              type="button"
+              className="portfolio-nav-btn next"
+              onClick={() => setActiveSlide((prev) => (prev === portfolioSlides.length - 1 ? 0 : prev + 1))}
+              aria-label="Slide berikutnya"
+            >
+              <ChevronRight size={22} />
+            </button>
+          </div>
+        ) : (
+          <div className="portfolio-viewer-scroll">
+            {portfolioSlides.map((slide) => (
+              <div key={slide.num} className="portfolio-scroll-page">
+                <div className="portfolio-scroll-label">Slide {slide.num} / 14 — {slide.title}</div>
+                <img src={slide.src} alt={`Slide ${slide.num} - ${slide.title}`} loading="lazy" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {viewMode === 'slide' && (
+          <div className="portfolio-thumbs modal-thumbs">
+            {portfolioSlides.map((slide, idx) => (
+              <button
+                key={slide.num}
+                type="button"
+                className={`portfolio-thumb ${idx === activeSlide ? 'active' : ''}`}
+                onClick={() => setActiveSlide(idx)}
+              >
+                <img src={slide.src} alt={`Slide ${slide.num}`} loading="lazy" />
+                <span>{slide.num}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CvPreviewModal({ onClose }: { onClose: () => void }) {
+  const [zoomed, setZoomed] = useState(false);
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="modal-backdrop portfolio-modal-backdrop"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      data-testid="cv-preview-modal"
+    >
+      <div className="portfolio-viewer-modal cv-preview-modal" role="dialog" aria-modal="true" aria-label="Preview CV Daffa Putra Emeral">
+        <div className="portfolio-viewer-topbar">
+          <div className="portfolio-viewer-title">
+            <span className="eyebrow">Curriculum Vitae · Preview</span>
+            <strong>CV — Daffa Putra Emeral, S.Kom</strong>
+          </div>
+          <div className="portfolio-viewer-controls">
+            <div className="portfolio-mode-switch">
+              <button
+                type="button"
+                className={!zoomed ? 'active' : ''}
+                onClick={() => setZoomed(false)}
+              >
+                100%
+              </button>
+              <button
+                type="button"
+                className={zoomed ? 'active' : ''}
+                onClick={() => setZoomed(true)}
+              >
+                Zoom 135%
+              </button>
+            </div>
+            <a
+              className="pill-button cv-download-cta"
+              href="/Daffa-Putra-Emeral-CV.pdf"
+              download="CV_DaffaPutra_WEB.pdf"
+              data-testid="button-confirm-download-cv"
+            >
+              Download PDF <Download size={14} />
+            </a>
+            <button
+              type="button"
+              className="modal-close portfolio-modal-close"
+              onClick={onClose}
+              aria-label="Tutup preview CV"
+              data-testid="button-close-cv-modal"
+            >
+              <X size={17} />
+            </button>
+          </div>
+        </div>
+
+        <div className="cv-preview-body">
+          <div className={`cv-preview-sheet ${zoomed ? 'zoomed' : ''}`}>
+            <img src="/cv-preview/cv-page-01.png" alt="Preview CV Daffa Putra Emeral" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [portfolioSlide, setPortfolioSlide] = useState<number | null>(null);
+  const [cvPreviewOpen, setCvPreviewOpen] = useState(false);
   return (
-     <main className="portfolio-shell">
-    <div className="grain" />
-    <Navigation onOpenMenu={() => setMenuOpen((open) => !open)} />
-    {menuOpen && <MobileMenu onClose={() => setMenuOpen(false)} />}
-    <Hero />
-    <Marquee />
-    <section id="about">
-      <Intro />
-      <About />
-    </section>
-    <section id="projects">
-      <Work onOpen={setSelectedProject} />
-    </section>
-    <section id="experience">
-      <Process />
-    </section>
-    <section id="contact">
-      <Contact />
-    </section>
-    <Footer />
-    {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
-  </main>
-);
+    <main className="portfolio-shell">
+      <div className="grain" />
+      <Navigation onOpenMenu={() => setMenuOpen((open) => !open)} onPreviewCv={() => setCvPreviewOpen(true)} />
+      {menuOpen && <MobileMenu onClose={() => setMenuOpen(false)} onPreviewCv={() => setCvPreviewOpen(true)} />}
+      <Hero />
+      <Marquee />
+      <section id="about">
+        <Intro />
+        <About onOpenPortfolio={(idx = 0) => setPortfolioSlide(idx)} />
+      </section>
+      <section id="projects">
+        <Work onOpen={setSelectedProject} />
+      </section>
+      <section id="experience">
+        <Process />
+      </section>
+      <section id="contact">
+        <Contact />
+      </section>
+      <Footer />
+      {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
+      {portfolioSlide !== null && (
+        <PortfolioViewerModal initialSlide={portfolioSlide} onClose={() => setPortfolioSlide(null)} />
+      )}
+      {cvPreviewOpen && <CvPreviewModal onClose={() => setCvPreviewOpen(false)} />}
+    </main>
+  );
 }
 
 function Router() {
