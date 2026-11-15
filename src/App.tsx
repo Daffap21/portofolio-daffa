@@ -114,7 +114,9 @@ function MobileMenu({ onClose, onPreviewCv }: { onClose: () => void; onPreviewCv
       <button onClick={() => go('about')} data-testid="mobile-link-about">Tentang saya</button>
       <button onClick={() => go('experience')} data-testid="mobile-link-experience">Experience</button>
       <button onClick={() => go('contact')} data-testid="mobile-link-contact">Hubungi saya</button>
-      <button onClick={() => { onClose(); onPreviewCv(); }} data-testid="mobile-link-cv">Preview / Download CV</button>
+      <button className="mobile-menu-cv" onClick={() => { onClose(); onPreviewCv(); }} data-testid="mobile-link-cv">
+        Download CV <Download size={14} strokeWidth={1.8} />
+      </button>
     </div>
   );
 }
@@ -750,8 +752,10 @@ function Home() {
       <div className="grain" />
       <Navigation onOpenMenu={() => setMenuOpen((open) => !open)} onPreviewCv={() => setCvPreviewOpen(true)} />
       {menuOpen && <MobileMenu onClose={() => setMenuOpen(false)} onPreviewCv={() => setCvPreviewOpen(true)} />}
-      <Hero />
-      <Marquee />
+      <div className="above-the-fold">
+        <Hero />
+        <Marquee />
+      </div>
       <section id="about">
         <Intro />
         <About onOpenPortfolio={(idx = 0) => setPortfolioSlide(idx)} />
